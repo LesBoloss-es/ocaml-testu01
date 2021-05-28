@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <title>OCaml Bindings for TestU01</title>
+        <link rel="stylesheet" href="./odoc.css" />
+        <meta charset="utf-8" />
+        <meta name="generator" content="odoc 1.5.2" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <script src="./highlight.pack.js"></script>
+        <script>
+         hljs.initHighlightingOnLoad();
+        </script>
+    </head>
+
+    <body>
+        <div class="content">
+            <header>
+                <h1 id="ocaml-bindings-for-testu01">
+                    <a href="#ocaml-bindings-for-testu01" class="anchor"></a>OCaml Bindings for TestU01</h1>
+                <p>From <em>TestU01 User’s guide, compact version</em>:</p>
+                <p>&gt; It is also possible to test one’s own or an external generator \(that is, a &gt; generator that is not predefined in TestU01\) very easily <code>...</code> as long as this &gt; generator is programmed in C. &gt;</p>
+                <p>Wrong. Behold: OCaml bindings for TestU01.</p>
+                <nav class="toc">
+                    <ul>
+                        <li><a href="#quick-links">Quick Links</a></li>
+                        <li><a href="#installation">Installation</a></li>
+                        <li><a href="#api">API</a></li>
+                        <li><a href="#example-use">Example Use</a></li>
+                        <li><a href="#examples-from-testu01's-documentation">Examples From TestU01's Documentation</a>
+                            <ul>
+                                <li><a href="#figure-4.1">Figure 4.1</a></li>
+                                <li><a href="#figure-4.3">Figure 4.3</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#faq">FAQ</a>
+                            <ul>
+                                <li><a href="#missing-bindings">Missing Bindings</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </header>
+            <h2 id="quick-links">
+                <a href="#quick-links" class="anchor"></a>Quick Links</h2>
+            <p>About <em>TestU01</em>:</p>
+            <ul>
+                <li><a href="http://simul.iro.umontreal.ca/testu01/tu01.html">Webpage</a></li>
+                <li><a href="http://simul.iro.umontreal.ca/testu01/install.html">Installation Instructions</a></li>
+                <li><a href="http://simul.iro.umontreal.ca/testu01/guideshorttestu01.pdf">User's Guide</a></li>
+                <li><a href="https://github.com/umontreal-simul/TestU01-2009/">GitHub Repository</a></li>
+            </ul>
+            <p>About <em>OCaml Bindings for TestU01</em>:</p>
+            <ul>
+                <li><a href="./">Documentation</a></li>
+                <li>API Documentation: <a href="./TestU01/">TestU01</a>, <a href="./Probdist/">Probdist</a></li>
+                <li><a href="https://github.com/LesBoloss-es/ocaml-testu01/">GitHub Repository</a></li>
+            </ul>
+            <h2 id="installation">
+                <a href="#installation" class="anchor"></a>Installation</h2>
+            <p>These OCaml bindings require TestU01 to be installed on your computer. It is possible your distribution provides a package for TestU01 already:</p>
+            <ul>
+                <li>for Debian buster and bullseye: <code>libtestu01</code>.</li>
+                <li>for Archlinux: <code>testu01</code>, in AUR.</li>
+            </ul>
+            <p>Otherwise, please refer to <a href="http://simul.iro.umontreal.ca/testu01/install.html">TestsU01's Installation Guide</a>.</p>
+            <h2 id="api">
+                <a href="#api" class="anchor"></a>API</h2>
+            <p>The OCaml API remains as close to that of TestU01 as possible. Some changes are still introduced to provide a more “OCaml-like” interface. The differences are the following:</p>
+            <ul>
+                <li>The names have changed:</li>
+            </ul>
+            <ul>
+                <li>The library is all under two main modules, <code>TestU01</code> and <code>Probdist</code>. The documentation of these modules can be found <a href="./TestU01/index.html">here</a> and <a href="./Probdist/index.html">here</a> respectively.</li>
+            </ul>
+            <ul>
+                <li>The functions, variables and types are not prefixed by the part of the library they belong to, but are in a corresponding module.</li>
+            </ul>
+            <ul>
+                <li>The names <code>are_with_underscore</code> and <code>NotInCamelcase</code>.</li>
+            </ul>
+            <ul>
+                <li>The global variables are read and modified using getters and setters.</li>
+                <li>The creation of external generators is done with three functions similar to that of the C library. In the module <code>TestU01</code>:</li>
+            </ul>
+            <ul>
+                <li><code>Unif01.create_extern_gen_bits</code> takes an OCaml “bits” function, that is a function that returns an integer between <code>0</code> and <code>2^30</code>. This is the case of <code>Random.bits</code>, for instance.</li>
+            </ul>
+            <ul>
+                <li><code>Unif01.create_extern_gen_int32</code> takes an OCaml function that returns an <code>int32</code>. Note that such a function is expected to provided all 32 bits. In particular, <code>fun () -&gt; Random.int32 Int32.max_int</code> is not a good candidate.</li>
+            </ul>
+            <ul>
+                <li><code>Unif01.create_extern_gen_01</code> takes an OCaml function that returns a float between <code>0</code> and <code>1</code>.</li>
+            </ul>
+            <ul>
+                <li>The destruction of external generators is let to OCaml's garbage collector and cannot be done by hand.</li>
+            </ul>
+            <p>About the name changes, here are a few examples. The binding for the function:</p><pre><code class="ml">void bbattery_RepeatBigCrush(unif01_Gen* gen, int* rep);</code></pre>
+            <p>will be:</p><pre><code class="ml">val Testu01.Bbattery.repeat_big_crush : Unif01.gen -&gt; int array -&gt; unit</code></pre>
+            <p>and the binding for the variable:</p><pre><code class="ml">extern double gofw_Suspectp;</code></pre>
+            <p>will be:</p><pre><code class="ml">val Probdist.Gofw.get_suspectp : unit -&gt; float
+val Probdist.Gofw.set_suspectp : float -&gt; unit</code></pre>
+            <h2 id="example-use">
+                <a href="#example-use" class="anchor"></a>Example Use</h2>
+            <p>Let us say we want to asses the quality of the PRNG in OCaml's standard library. We can simply write the following file:</p><pre><code class="ml">open TestU01
+open Probdist
+let () =
+  let gen = Unif01.create_extern_gen_bits &quot;stdlib&quot; Random.bits in
+  Gofw.set_suspectp 0.01;
+  Bbattery.crush gen</code></pre>
+            <p>This creates a TestU01 generator of type <code>Unif01.gen</code> out of a function <code>unit -&gt;
+bits</code>, sets the threshold for suspect p-values to <code>0.01</code> \(that is optional, the default is <code>0.001</code>\) and applies the test battery &quot;crush&quot; to the generator. It can then be compiled to an executable that takes about 40 minutes to run and writes a report on the standard output, similar to the following:</p><pre><code class="ml">      Test                          p-value
+----------------------------------------------
+11  BirthdaySpacings, t = 2          eps
+31  Gap, r = 0                       eps
+33  Gap, r = 0                       eps
+47  SampleMean                      0.9940
+51  WeightDistrib, r = 0             eps
+52  WeightDistrib, r = 8             eps
+53  WeightDistrib, r = 16            eps
+83  HammingCorr, L = 300            8.6e-3
+86  HammingIndep, L = 30            0.9945
+----------------------------------------------</code></pre>
+            <p>Some tests \(with p-value <code>eps</code>\) do not pass. For some tests, the p-value is suspicious \(that is, inferior to <code>suspectp</code> or bigger than <code>1 - suspectp</code> but not <code>eps</code> nor <code>1 - eps</code>\), but we cannot really conclude anything from it. Luckily, TestU01 provides <code>Repeat*</code> variants for its test batteries. They allow to provide, <em>via</em> an array, the number of times each test must be run. Let us repeat the 47th test, “SampleMean”, the 83rd test, “HammingCorr with L = 300”, and the 86th test, “HammingIndep with L = 30”. We will repeat them 10 times each, and the others 0 times, to decide whether the p-value is indeed suspicious or if it was an unlucky artefact. For that, we can write the following file:</p><pre><code class="ml">open TestU01
+open Probdist
+let () =
+  let gen = Unif01.create_extern_gen_bits &quot;stdlib&quot; Random.bits in
+  Gofw.set_suspectp 0.01;
+  let rep = Array.make (1 + Bbattery.ntests_crush) 0 in
+  rep.(47) &lt;- 10;
+  rep.(83) &lt;- 10;
+  rep.(86) &lt;- 10;
+  Bbattery.repeat_crush gen rep</code></pre>
+            <p>Running it takes about 5 minutes and writes the following report:</p><pre><code class="ml">All tests were passed</code></pre>
+            <p>This means that all these tests were indeed unlucky artefacts. \(The other tests, with p-value <code>eps</code>, definitely do not.\)</p>
+            <p>For more information, we encourage you to refer to TestU01's user's guide.</p>
+            <h2 id="examples-from-testu01's-documentation">
+                <a href="#examples-from-testu01's-documentation" class="anchor"></a>Examples From TestU01's Documentation</h2>
+            <p>TestU01's User Guide includes several examples. Here are some with their OCaml version. These examples as well as their C version and the expected result can be found in the <code>examples</code> directory.</p>
+            <h3 id="figure-4.1">
+                <a href="#figure-4.1" class="anchor"></a>Figure 4.1</h3>
+            <p>In the User Guide:</p><pre><code class="ml">#include &quot;ulcg.h&quot;
+#include &quot;unif01.h&quot;
+#include &quot;bbattery.h&quot;
+
+int main (void)
+{
+   unif01_Gen *gen;
+   gen = ulcg_CreateLCG (2147483647, 16807, 0, 12345);
+   bbattery_SmallCrush (gen);
+   ulcg_DeleteGen (gen);
+   return 0;
+}</code></pre>
+            <p>With these bindings:</p><pre><code class="ml">open TestU01
+
+let () =
+  let gen = Ulcg.create_lcg 2147483647 16807 0 12345 in
+  Bbattery.small_crush gen</code></pre>
+            <h3 id="figure-4.3">
+                <a href="#figure-4.3" class="anchor"></a>Figure 4.3</h3>
+            <p>In the User Guide:</p><pre><code class="ml">#include &quot;gdef.h&quot;
+#include &quot;swrite.h&quot;
+#include &quot;bbattery.h&quot;
+
+int main (void)
+{
+   swrite_Basic = FALSE;
+   bbattery_RabbitFile (&quot;vax.bin&quot;, 1048576);
+   return 0;
+}</code></pre>
+            <p>With these bindings:</p><pre><code class="ml">open TestU01
+
+let () =
+  Swrite.set_basic false;
+  Bbattery.rabbit_file &quot;vax.bin&quot; 1048576.</code></pre>
+            <p>You can refer to the <code>examples</code> directory which contains examples from TestU01 as well as their OCaml version.</p>
+            <h2 id="faq">
+                <a href="#faq" class="anchor"></a>FAQ</h2>
+            <h3 id="missing-bindings">
+                <a href="#missing-bindings" class="anchor"></a>Missing Bindings</h3>
+            <p>We add bindings on-demand and our use is mainly oriented towards test batteries. So if some bindings do not appear, it is simply that we did not have any use for them. Add them \(PR are welcome\), or ask that we do!</p>
+        </div>
+    </body>
+
+</html>
