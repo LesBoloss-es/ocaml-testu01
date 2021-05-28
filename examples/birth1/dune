@@ -1,0 +1,20 @@
+(executable
+ (name birth1)
+ (libraries testu01))
+
+(rule
+ (with-stdout-to birth1.output
+  (pipe-stdout
+   (run ./birth1.exe)
+   (system "grep -v '^HOST ='"))))
+
+(rule
+ (with-stdout-to birth1.expected
+  (progn
+   (with-stdin-from birth1.res
+    (system "grep -v '^HOST ='"))
+   (echo "\n\n\n\n"))))
+
+(rule
+ (alias runtest)
+ (action (diff birth1.output birth1.expected)))

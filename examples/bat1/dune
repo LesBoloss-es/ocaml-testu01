@@ -1,0 +1,21 @@
+(executable
+ (name bat1)
+ (libraries testu01))
+
+(rule
+ (with-stdout-to bat1.output
+  (pipe-stdout
+   (run ./bat1.exe)
+   (system "tail -n 20")
+   (system "grep -v '^ Total CPU time:'"))))
+
+(rule
+ (with-stdout-to bat1.expected
+  (progn
+   (with-stdin-from bat1.res
+    (system "grep -v '^ Total CPU time:'"))
+   (echo "\n\n\n"))))
+
+(rule
+ (alias runtest)
+ (action (diff bat1.output bat1.expected)))
