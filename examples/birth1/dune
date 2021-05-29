@@ -17,4 +17,8 @@
 
 (rule
  (alias runtest)
- (action (diff birth1.output birth1.expected)))
+ (action (diff birth1.output birth1.expected))
+ (enabled_if %{arch_sixtyfour}))
+
+;; This test uses the value 2147483647 which is not representable in an int on a
+;; 32-bit OCaml implementation. It is only enabled on 64-bit architectures.
