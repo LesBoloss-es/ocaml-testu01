@@ -25,17 +25,17 @@
  (action
   (progn
    (system "unzip *.zip")
-   (chdir TestU01-1.2.3
+   (chdir TestU01
     (progn
      (system ./configure)
      (system make)))
-   (system "cp TestU01-1.2.3/include/*.h .")
-   (system "cp TestU01-1.2.3/testu01/.libs/libtestu01.a libtestu01_vendor.a")
-   (system "cp TestU01-1.2.3/testu01/.libs/libtestu01.so dlltestu01_vendor.so")
-   (system "cp TestU01-1.2.3/probdist/.libs/libprobdist.a libprobdist_vendor.a")
-   (system "cp TestU01-1.2.3/probdist/.libs/libprobdist.so dllprobdist_vendor.so")
-   (system "cp TestU01-1.2.3/mylib/.libs/libmylib.a libmylib_vendor.a")
-   (system "cp TestU01-1.2.3/mylib/.libs/libmylib.so dllmylib_vendor.so"))))
+   (system "cp TestU01/include/*.h .")
+   (system "cp TestU01/testu01/.libs/libtestu01.a libtestu01_vendor.a")
+   (system "cp TestU01/testu01/.libs/libtestu01.so dlltestu01_vendor.so")
+   (system "cp TestU01/probdist/.libs/libprobdist.a libprobdist_vendor.a")
+   (system "cp TestU01/probdist/.libs/libprobdist.so dllprobdist_vendor.so")
+   (system "cp TestU01/mylib/.libs/libmylib.a libmylib_vendor.a")
+   (system "cp TestU01/mylib/.libs/libmylib.so dllmylib_vendor.so"))))
 
 ;; Important notes:
 ;;
