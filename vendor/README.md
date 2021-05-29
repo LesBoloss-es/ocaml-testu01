@@ -5,7 +5,8 @@ only meant to be used to compile the bindings in the rest of the repository.
 
 The original TestU01 library is copyrighted to Pierre L'Ecuyer and Université de
 Montréal and is licensed under the Apache License Version 2.0 (see
-https://www.apache.org/licenses/LICENSE-2.0).
+https://www.apache.org/licenses/LICENSE-2.0). The `COPYING` file from TestU01's
+archive is copied in this directory for transparency.
 
 The zip file `TestU01.zip` **is not the same** as the original one. Here is a
 complete list of changes:
