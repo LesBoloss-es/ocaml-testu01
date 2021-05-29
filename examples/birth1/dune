@@ -6,13 +6,16 @@
  (with-stdout-to birth1.output
   (pipe-stdout
    (run ./birth1.exe)
-   (system "grep -v '^HOST ='"))))
+   (system "grep -v '^HOST ='")
+   (system "grep -v '^CPU time used'"))))
 
 (rule
  (with-stdout-to birth1.expected
   (progn
    (with-stdin-from birth1.res
-    (system "grep -v '^HOST ='"))
+    (pipe-stdout
+     (system "grep -v '^HOST ='")
+     (system "grep -v '^CPU time used'")))
    (echo "\n\n\n\n"))))
 
 (rule
