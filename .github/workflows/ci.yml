@@ -85,11 +85,14 @@ jobs:
       matrix:
         tag:
           - alpine
+          - archlinux
           - centos
           - debian
           - debian-testing
           - debian-unstable
+          - fedora
           - opensuse
+          - oraclelinux
           - ubuntu
           - ubuntu-lts
 
