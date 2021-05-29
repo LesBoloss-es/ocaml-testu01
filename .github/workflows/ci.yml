@@ -75,3 +75,29 @@ jobs:
 
       - name: Try Cleaning
         run: opam exec -- make clean
+
+  ## ======================== [ Docker-based CI ] ======================== ##
+
+  docker-based:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        tag:
+          - alpine
+          - centos
+          - debian
+          - debian-testing
+          - debian-unstable
+          - opensuse
+          - ubuntu
+          - ubuntu-lts
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Build Docker Image
+        run: docker build . --file .github/workflows/ci.dockerfile --build-arg tag=${{matrix.tag}}
