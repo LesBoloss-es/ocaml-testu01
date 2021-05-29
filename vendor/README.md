@@ -11,8 +11,12 @@ archive is copied in this directory for transparency.
 The zip file `TestU01.zip` **is not the same** as the original one. Here is a
 complete list of changes:
 
-- Renamed main directory from `TestU01-1.2.3`
+- Renamed main directory from `TestU01-1.2.3` to `TestU01`
 
 - Replaced `TestU01-1.2.3/config.guess` (timestamped `2006-07-02`) by the one
   timestamped `2021-01-01` taken from
   http://cvs.savannah.gnu.org/viewvc/*checkout*/config/config/config.guess
+
+- Replaced `TestU01-1.2.3/config.sub` (timestamped `2006-09-20`) by the one
+  timestamped `2021-01-01` taken from
+  http://cvs.savannah.gnu.org/viewvc/*checkout*/config/config/config.sub
