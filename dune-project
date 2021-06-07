@@ -1,7 +1,7 @@
 (lang dune 2.8)
 
 (name testu01)
-(version 1.2.3-0.1.1)
+(version 1.2.3-0.2)
 (source (github LesBoloss-es/ocaml-testu01))
 (documentation https://lesboloss-es.github.io/ocaml-testu01/)
 
