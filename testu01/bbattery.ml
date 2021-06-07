@@ -1,3 +1,9 @@
+external get_n_tests : unit -> int = "caml_bbattery_getNTests"
+
+external get_p_val : unit -> float array = "caml_bbattery_getpVal"
+
+external get_test_names : unit -> string array = "caml_bbattery_getTestNames"
+
 (* SmallCrush *)
 
 external small_crush : Unif01.gen -> unit =

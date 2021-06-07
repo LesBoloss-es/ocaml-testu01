@@ -3,6 +3,7 @@
 
 #define CAML_NAME_SPACE
 #include <caml/mlvalues.h>
+#include <caml/alloc.h>
 #include <caml/memory.h>
 #include <caml/callback.h>
 #include <caml/bigarray.h>
@@ -24,6 +25,33 @@ int* int_array_from_ocaml(value brep) {
     rep[i] = (int) rep_i;
   }
   CAMLreturnT(int*, rep);
+}
+
+/* ****************************** [ p-values ] ****************************** */
+
+value caml_bbattery_getNTests(value unit) {
+  CAMLparam1(unit);
+  CAMLreturn(Val_long(bbattery_NTests));
+}
+
+value caml_bbattery_getpVal(value unit) {
+  CAMLparam1(unit);
+  value pVal = caml_alloc_float_array(bbattery_NTests);
+  for (int i = 0; i < bbattery_NTests; i++) {
+    Store_double_field(pVal, i, bbattery_pVal[i]);
+  }
+  CAMLreturn(pVal);
+}
+
+value caml_bbattery_getTestNames(value unit) {
+  CAMLparam1(unit);
+  const char **testNames = malloc(sizeof(char*) * (1 + bbattery_NTests));
+  testNames[bbattery_NTests] = NULL;
+  for (int i = 0; i < bbattery_NTests; i++) {
+    testNames[i] = bbattery_TestNames[i];
+  }
+  value camlTestNames = caml_alloc_array(caml_copy_string, testNames);
+  CAMLreturn(camlTestNames);
 }
 
 /* ***************************** [ SmallCrush ] ***************************** */

@@ -25,6 +25,24 @@
    number of statistics in the summary reports is larger than the number of
    tests in the description of the batteries. *)
 
+val get_n_tests : unit -> int
+(** The number of p-values in the array {!get_p_val}. For small sample size,
+   some of the tests in the battery may not be done. Furthermore, some of the
+   tests computes more than one statistic and its p-value, so {!get_n_tests}
+   will usually be larger than the number of tests in the battery. *)
+
+val get_p_val : unit -> float array
+(** This array keeps the p-values resulting from the battery of tests that is
+   currently applied (or the last one that has been called). It is used by any
+   battery in this module. The p-value of the [j]-th test in the battery is kept
+   in [(get_p_val()).(j-1])], for [1 ≤ j ≤ get_n_tests()]. *)
+
+val get_test_names : unit -> string array
+(** This array keeps the names of each test from the battery that is currently
+   applied (or the last one that has been called). It is used by any battery in
+   this module. The name of the [j]-th test in the battery is kept in
+   [(get_test_names()).(j-1)], for [1 ≤ j ≤ get_n_tests()]. *)
+
 (** {2 SmallCrush} *)
 
 val small_crush : Unif01.gen -> unit
