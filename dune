@@ -13,8 +13,9 @@
  (deps README.md)
  (action
   (progn
-   (system "sed -i 's|https://lesboloss-es.github.io/ocaml-testu01/|./|' README.md")
-   (with-stdout-to index.mld (run md2mld README.md)))))
+   (with-stdout-to index.md
+    (system "sed 's|https://lesboloss-es.github.io/ocaml-testu01/|./|' README.md"))
+   (with-stdout-to index.mld (run md2mld index.md)))))
 
 (documentation
  (package testu01)
