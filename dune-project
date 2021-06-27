@@ -17,12 +17,12 @@
 
 (package
  (name testu01)
- (synopsis "OCaml bindings for TestU01 1.2.3")
- (description "This package provides OCaml bindings for TestU01 1.2.3 TestU01 is
-  a software library, implemented in C, and offering a collection of utilities
-  for the empirical statistical testing of uniform random number generators.
-  The OCaml bindings allow for easy testing of random number generators written
-  in OCaml and that claim to be uniform.")
+ (synopsis "OCaml bindings for TestU01 (and Probdist and MyLib)")
+ (description "This package provides OCaml bindings for TestU01 1.2.3, as well
+  as Probdist and Mylib. TestU01 is a software library, implemented in C, and
+  offering a collection of utilities for the empirical statistical testing of
+  uniform random number generators. The OCaml bindings allow for easy testing of
+  random number generators written in OCaml and that claim to be uniform.")
  (depends
   (ocaml  (>= 4.06.0))
   (md2mld (or :build :with-doc))))

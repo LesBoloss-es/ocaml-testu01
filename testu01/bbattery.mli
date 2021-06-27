@@ -35,13 +35,22 @@ val get_p_val : unit -> float array
 (** This array keeps the p-values resulting from the battery of tests that is
    currently applied (or the last one that has been called). It is used by any
    battery in this module. The p-value of the [j]-th test in the battery is kept
-   in [(get_p_val()).(j-1])], for [1 ≤ j ≤ get_n_tests()]. *)
+   in [(get_p_val()).(j-1])], for [1 ≤ j ≤ get_n_tests()].
+
+   Note for the bindings: calling {!get_p_val} copies the underlying C array up
+   to [get_n_tests()]. This means that one can modify the result of
+   [get_p_val()] safely, and that an other call of [get_p_val()] will yield the
+   unmodified array again. This also means that, contrary to C, the array
+   returned by [get_p_val()] contains exactly [get_n_tests()] elements. It is
+   then safe to iterate through it with the usual functions. *)
 
 val get_test_names : unit -> string array
 (** This array keeps the names of each test from the battery that is currently
    applied (or the last one that has been called). It is used by any battery in
    this module. The name of the [j]-th test in the battery is kept in
-   [(get_test_names()).(j-1)], for [1 ≤ j ≤ get_n_tests()]. *)
+   [(get_test_names()).(j-1)], for [1 ≤ j ≤ get_n_tests()].
+
+   Note for the bindings: see {!get_p_val}. *)
 
 (** {2 SmallCrush} *)
 
@@ -88,6 +97,17 @@ val ntests_small_crush : int
 
 val crush : Unif01.gen -> unit
 
+(** Applies the battery [Crush], a suite of stringent statistical tests, to the
+   generator [gen]. The battery includes the classical tests described in Knuth
+   1998 ({i The Art of Computer Programming, Volume 2: Seminumerical
+   Algorithms}) as well as many other tests. Some of these tests assume that
+   [gen] returns at least 30 bits of resolution; if that is not the case, then
+   the generator will certainly fail these particular tests. One test requires
+   31 bits of resolution: the [BirthdaySpacings] test with t = 2. On a PC with
+   an AMD Athlon 64 Processor 4000+ of clock speed 2400 MHz running with Red Hat
+   Linux, [Crush] will require around 1 hour of CPU time. [Crush] uses
+   approximately 2^35 random numbers. The following tests are applied: FIXME *)
+
 val repeat_crush : Unif01.gen -> int array -> unit
 (** Similar to {!repeat_small_crush} above but applied on [Crush]. *)
 
@@ -97,6 +117,122 @@ val ntests_crush : int
 (** {2 BigCrush} *)
 
 val big_crush : Unif01.gen -> unit
+
+(** Applies the battery [BigCrush], a suite of very stringent statistical tests,
+   to the generator [gen]. Some of these tests assume that [gen] returns at
+   least 30 bits of resolution; if that is not the case, then the generator will
+   certainly fail these particular tests. One test requires 31 bits of
+   resolution: the [BirthdaySpacings] test with t = 2. On a PC with an AMD
+   Athlon 64 Processor 4000+ of clock speed 2400 MHz running with Linux,
+   [BigCrush] will take around 8 hours of CPUtime. [BigCrush] uses close to 2^38
+   random numbers. The following tests are applied:
+
+   + {!Smarsa.serial_over} with N = 1, n = 10^9, r = 0, d = 2^8, t = 3.
+   + {!Smarsa.serial_over} with N = 1, n = 10^9, r = 22, d = 2^8, t = 3.
+   + {!Smarsa.collision_over} with N = 30, n= 2∗10^7, r = 0, d = 2^21, t = 2.
+   + {!Smarsa.collision_over} with N = 30, n= 2∗10^7, r = 9, d = 2^21, t = 2.
+   + {!Smarsa.collision_over} with N = 30, n= 2∗10^7, r = 0, d = 2^14, t = 3.
+   + {!Smarsa.collision_over} with N = 30, n= 2∗10^7, r = 16, d = 2^14, t = 3.
+   + {!Smarsa.collision_over} with N = 30, n= 2∗10^7, r = 0, d = 64, t = 7.
+   + {!Smarsa.collision_over} with N = 30, n= 2∗10^7, r = 24, d = 64, t = 7.
+   + {!Smarsa.collision_over} with N = 30, n= 2∗10^7, r = 0, d = 8, t = 14.
+   + {!Smarsa.collision_over} with N = 30, n= 2∗10^7, r = 27, d = 8, t = 14.
+   + {!Smarsa.collision_over} with N = 30, n= 2∗10^7, r = 0, d = 4, t = 21.
+   + {!Smarsa.collision_over} with N = 30, n= 2∗10^7, r = 28, d = 4, t = 21.
+   + {!Smarsa.birthday_spacings} with N = 100, n = 10^7, r = 0, d = 2^31, t = 2, p = 1.
+   + {!Smarsa.birthday_spacings} with N = 20, n = 2∗10^7, r = 0, d = 2^21, t = 3, p = 1.
+   + {!Smarsa.birthday_spacings} with N = 20, n = 3∗10^7, r = 14, d = 2^16, t = 4, p = 1.
+   + {!Smarsa.birthday_spacings} with N = 20, n = 2∗10^7, r = 0, d = 2^9, t = 7, p = 1.
+   + {!Smarsa.birthday_spacings} with N = 20, n = 2∗10^7, r = 7, d = 2^9, t = 7, p = 1.
+   + {!Smarsa.birthday_spacings} with N = 20, n = 3∗10^7, r = 14, d = 2^8, t = 8, p = 1.
+   + {!Smarsa.birthday_spacings} with N = 20, n = 3∗10^7, r = 22, d = 2^8, t = 8, p = 1.
+   + {!Smarsa.birthday_spacings} with N = 20, n = 3∗10^7, r = 0, d = 2^4, t = 16, p = 1.
+   + {!Smarsa.birthday_spacings} with N = 20, n = 3∗10^7, r = 26, d = 2^4, t = 16, p = 1.
+   + {!Snpair.close_pairs} with N = 30, n = 6∗10^6, r = 0, t = 3, p = 0, m = 30.
+   + {!Snpair.close_pairs} with N = 20, n = 4∗10^6, r = 0, t = 5, p = 0, m = 30.
+   + {!Snpair.close_pairs} with N = 10, n = 3∗10^6, r = 0, t = 9, p = 0, m = 30.
+   + {!Snpair.close_pairs} with N = 5, n = 2∗10^6, r = 0, t = 16, p = 0, m = 30.
+   + {!Sknuth.simp_poker} with N = 1, n = 4∗10^8, r = 0, d = 8, k = 8.
+   + {!Sknuth.simp_poker} with N = 1, n = 4∗10^8, r = 27, d = 8, k = 8.
+   + {!Sknuth.simp_poker} with N = 1, n = 10^8, r = 0, d = 32, k = 32.
+   + {!Sknuth.simp_poker} with N = 1, n = 10^8, r = 25, d = 32, k = 32.
+   + {!Sknuth.coupon_collector} with N = 1, n = 2∗10^8, r = 0, d = 8.
+   + {!Sknuth.coupon_collector} with N = 1, n = 2∗10^8, r = 10, d = 8.
+   + {!Sknuth.coupon_collector} with N = 1, n = 2∗10^8, r = 20, d = 8.
+   + {!Sknuth.coupon_collector} with N = 1, n = 2∗10^8, r = 27, d = 8.
+   + {!Sknuth.gap} with N = 1, n = 5∗10^8, r = 0, Alpha = 0, Beta = 1/16.
+   + {!Sknuth.gap} with N = 1, n = 3∗10^8, r = 25, Alpha = 0, Beta = 1/32.
+   + {!Sknuth.gap} with N = 1, n = 10^8, r = 0, Alpha = 0, Beta = 1/128.
+   + {!Sknuth.gap} with N = 1, n = 10^7, r = 20, Alpha = 0, Beta = 1/1024.
+   + {!Sknuth.run} with N = 5, n = 10^9, r = 0, Up = FALSE.
+   + {!Sknuth.run} with N = 5, n = 10^9, r = 15, Up = TRUE.
+   + {!Sknuth.permutation} with N = 1, n = 10^9, r = 0, t = 3.
+   + {!Sknuth.permutation} with N = 1, n = 10^9, r = 0, t = 5.
+   + {!Sknuth.permutation} with N = 1, n = 5∗10^8, r = 0, t = 7.
+   + {!Sknuth.permutation} with N = 1, n = 5∗10^8, r = 10, t = 10.
+   + {!Sknuth.collision_permut} with N = 20, n = 2∗10^7, r = 0, t = 14.
+   + {!Sknuth.collision_permut} with N = 20, n = 2∗10^7, r = 10, t = 14.
+   + {!Sknuth.max_oft} with N = 40, n = 10^7, r = 0, d = 10^5, t = 8.
+   + {!Sknuth.max_oft} with N = 30, n = 10^7, r = 0, d = 10^5, t = 16.
+   + {!Sknuth.max_oft} with N = 20, n = 10^7, r = 0, d = 10^5, t = 24.
+   + {!Sknuth.max_oft} with N = 20, n = 10^7, r = 0, d = 10^5, t = 32.
+   + {!Svaria.sample_prod} with N = 40, n = 10^7, r = 0, t = 8.
+   + {!Svaria.sample_prod} with N = 20, n = 10^7, r = 0, t = 16.
+   + {!Svaria.sample_prod} with N = 20, n = 10^7, r = 0, t = 24.
+   + {!Svaria.sample_mean} with N = 2∗10^7, n = 30, r = 0.
+   + {!Svaria.sample_mean} with N = 2∗10^7, n = 30, r = 10.
+   + {!Svaria.sample_corr} with N = 1, n = 2∗10^9, r = 0, k = 1.
+   + {!Svaria.sample_corr} with N = 1, n = 2∗10^9, r = 0, k = 2.
+   + {!Svaria.appearance_spacings} with N = 1, Q = 10^7, K = 10^9, r = 0, s = 3, L = 15.
+   + {!Svaria.appearance_spacings} with N = 1, Q = 10^7, K = 10^9, r = 27, s = 3, L = 15.
+   + {!Svaria.weight_distrib} with N = 1, n = 2∗10^7, r = 0, k = 256, Alpha = 0, Beta = 1/4.
+   + {!Svaria.weight_distrib} with N = 1, n = 2∗10^7, r = 20, k = 256, Alpha = 0, Beta = 1/4.
+   + {!Svaria.weight_distrib} with N = 1, n = 2∗10^7, r = 28, k = 256, Alpha = 0, Beta = 1/4.
+   + {!Svaria.weight_distrib} with N = 1, n = 2∗10^7, r = 0, k = 256, Alpha = 0, Beta = 1/16.
+   + {!Svaria.weight_distrib} with N = 1, n = 2∗10^7, r = 10, k = 256, Alpha = 0, Beta = 1/16.
+   + {!Svaria.weight_distrib} with N = 1, n = 2∗10^7, r = 26, k = 256, Alpha = 0, Beta = 1/16.
+   + {!Svaria.sum_collector} with N = 1, n = 5∗10^8, r = 0, g = 10.
+   + {!Smarsa.matrix_rank} with N = 10, n = 10^6, r = 0, s = 5, L = k = 30.
+   + {!Smarsa.matrix_rank} with N = 10, n = 10^6, r = 25, s = 5, L = k = 30.
+   + {!Smarsa.matrix_rank} with N = 1, n = 5000, r = 0, s = 4, L = k = 1000.
+   + {!Smarsa.matrix_rank} with N = 1, n = 5000, r = 26, s = 4, L = k = 1000.
+   + {!Smarsa.matrix_rank} with N = 1, n = 80, r = 15, s = 15, L = k = 5000.
+   + {!Smarsa.matrix_rank} with N = 1, n = 80, r = 0, s = 30, L = k = 5000.
+   + {!Smarsa.savir2} with N = 10, n = 10^7, r = 10, m = 220, t = 30.
+   + {!Smarsa.gcd} with N = 10, n = 5∗10^7, r = 0, s = 30.
+   + {!Swalk.random_walk_1} with N = 1, n = 10^8, r = 0, s = 5, L0 = L1 = 50.
+   + {!Swalk.random_walk_1} with N = 1, n = 10^8, r = 25, s = 5, L0 = L1 = 50.
+   + {!Swalk.random_walk_1} with N = 1, n = 10^7, r = 0, s = 10, L0 = L1 = 1000.
+   + {!Swalk.random_walk_1} with N = 1, n = 10^7, r = 20, s = 10, L0 = L1 = 1000.
+   + {!Swalk.random_walk_1} with N = 1, n = 10^6, r = 0, s = 15, L0 = L1 = 10000.
+   + {!Swalk.random_walk_1} with N = 1, n = 10^6, r = 15, s = 15, L0 = L1 = 10000.
+   + {!Scomp.linear_comp} with N = 1, n = 400000, r = 0, s = 1.
+   + {!Scomp.linear_comp} with N = 1, n = 400000, r = 29, s = 1.
+   + {!Scomp.lempel_ziv} with N = 10, k = 27, r = 0, s = 30.
+   + {!Scomp.lempel_ziv} with N = 10, k = 27, r = 15, s = 15.
+   + {!Sspectral.fourier_3} with N = 100000, r = 0, s = 3, k = 14.
+   + {!Sspectral.fourier_3} with N = 100000, r = 27, s = 3, k = 14.
+   + {!Sstring.longest_head_run} with N = 1, n = 1000, r = 0, s = 3, L = 10^7.
+   + {!Sstring.longest_head_run} with N = 1, n = 1000, r = 27, s = 3, L = 10^7.
+   + {!Sstring.periods_in_strings} with N = 10, n = 5∗10^8, r = 0, s = 10.
+   + {!Sstring.periods_in_strings} with N = 10, n = 5∗10^8, r = 20, s = 10.
+   + {!Sstring.hamming_weight_2} with N = 10, n = 10^9, r = 0, s = 3, L = 10^6.
+   + {!Sstring.hamming_weight_2} with N = 10, n = 10^9, r = 27, s = 3, L = 10^6.
+   + {!Sstring.hamming_corr} with N = 1, n = 10^9, r = 10, s = 10, L = 30.
+   + {!Sstring.hamming_corr} with N = 1, n = 10^8, r = 10, s = 10, L = 300.
+   + {!Sstring.hamming_corr} with N = 1, n = 10^8, r = 10, s = 10, L = 1200.
+   + {!Sstring.hamming_indep} with N = 10, n = 3∗10^7, r = 0, s = 3, L = 30, d = 0.
+   + {!Sstring.hamming_indep} with N = 10, n = 3∗10^7, r = 27, s = 3, L = 30, d = 0.
+   + {!Sstring.hamming_indep} with N = 1, n = 3∗10^7, r = 0, s = 4, L = 300, d = 0.
+   + {!Sstring.hamming_indep} with N = 1, n = 3∗10^7, r = 26, s = 4, L = 300, d = 0.
+   + {!Sstring.hamming_indep} with N = 1, n = 10^7, r = 0, s = 5, L = 1200, d = 0.
+   + {!Sstring.hamming_indep} with N = 1, n = 10^7, r = 25, s = 5, L = 1200, d = 0.
+   + {!Sstring.run} with N = 1, n = 2∗10^9, r = 0, s = 3.
+   + {!Sstring.run} with N = 1, n = 2∗10^9, r = 27, s = 3.
+   + {!Sstring.auto_cor} with N = 10, n = 10^9, r = 0, s = 3, d = 1.
+   + {!Sstring.auto_cor} with N = 10, n = 10^9, r = 0, s = 3, d = 3.
+   + {!Sstring.auto_cor} with N = 10, n = 10^9, r = 27, s = 3, d = 1.
+   + {!Sstring.auto_cor} with N = 10, n = 10^9, r = 27, s = 3, d = 3. *)
 
 val repeat_big_crush : Unif01.gen -> int array -> unit
 (** Similar to {!repeat_small_crush} above but applied on [BigCrush]. *)
