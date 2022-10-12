@@ -19,10 +19,10 @@ About *TestU01*:
 - [GitHub Repository](https://github.com/umontreal-simul/TestU01-2009/)
 
 About *OCaml Bindings for TestU01*:
-- [Documentation](https://lesboloss-es.github.io/ocaml-testu01/index.html)
+- [Documentation](https://ocaml.org/p/testu01/1.2.3-0.2/doc/index.html)
 - API Documentation:
-  [TestU01](https://lesboloss-es.github.io/ocaml-testu01/TestU01/index.html),
-  [Probdist](https://lesboloss-es.github.io/ocaml-testu01/Probdist/index.html)
+  [TestU01](https://ocaml.org/p/testu01/1.2.3-0.2/doc/TestU01/index.html),
+  [Probdist](https://ocaml.org/p/testu01/1.2.3-0.2/doc/Probdist/index.html)
 - [GitHub Repository](https://github.com/LesBoloss-es/ocaml-testu01/)
 
 Installation
