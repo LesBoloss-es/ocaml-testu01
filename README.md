@@ -9,6 +9,9 @@ From *TestU01 User’s guide, compact version*:
 
 Wrong. Behold: OCaml bindings for TestU01.
 
+> [!WARNING]
+> This repository was merged into [lesboloss-es/camelotte](https://github.com/LesBoloss-es/camelotte/). It is unmaintained.
+
 Quick Links
 -----------
 
